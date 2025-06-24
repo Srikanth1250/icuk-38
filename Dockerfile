@@ -1,5 +1,5 @@
 # First stage: build the application
-FROM eclipse-temurin:17-jdk AS build
+RUN chmod +x mvnw && ./mvnw package -DskipTests
 WORKDIR /app
 
 # Copy source code and build using Maven or Gradle
