@@ -1,3 +1,12 @@
-FROM openjdk:8
-ADD jarstaging/com/stalin/demo-workshop/2.0.2/demo-workshop-2.0.2.jar demo-workshop.jar
-ENTRYPOINT ["java", "-jar", "demo-workshop.jar"]
+
+# Use JDK-only image for runtime (smaller size)
+FROM eclipse-temurin:17-jdk
+
+# Create working directory
+WORKDIR /app
+
+# Copy built JAR from the build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Command to run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
