@@ -1,12 +1,14 @@
+# Use modern lightweight Java 17 image
+FROM eclipse-temurin:17-jdk-alpine
 
-# Use JDK-only image for runtime (smaller size)
-FROM eclipse-temurin:17-jdk
-
-# Create working directory
+# Set work directory
 WORKDIR /app
 
-# Copy built JAR from the build stage
-COPY --from=build /app/target/*.jar app.jar
+# Copy the jar into image
+COPY target/oms-order-service-0.0.1-SNAPSHOT.jar app.jar
 
-# Command to run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Expose port (your app listens on 9093)
+EXPOSE 9093
+
+# Run the app
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
