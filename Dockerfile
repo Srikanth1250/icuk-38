@@ -1,14 +1,13 @@
 # First stage: build the application
-RUN chmod +x mvnw && ./mvnw package -DskipTests
+FROM eclipse-temurin:17-jdk AS build
 WORKDIR /app
 
-# Copy source code and build using Maven or Gradle
 COPY . .
-RUN ./mvnw package -DskipTests
+RUN chmod +x mvnw && ./mvnw package -DskipTests
 
-# Second stage: run the application
-from=build /app/target/*.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Second stage: create a smaller runtime image
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar
 
