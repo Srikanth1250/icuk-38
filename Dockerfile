@@ -1,14 +1,15 @@
-# Use modern lightweight Java 17 image
-FROM eclipse-temurin:17-jdk-alpine
-
-# Set work directory
+# First stage: build the application
+FROM eclipse-temurin:17-jdk AS build
 WORKDIR /app
 
-# Copy the jar into image
-COPY target/oms-order-service-0.0.1-SNAPSHOT.jar app.jar
+# Copy source code and build using Maven or Gradle
+COPY . .
+RUN ./mvnw package -DskipTests
 
-# Expose port (your app listens on 9093)
-EXPOSE 9093
+# Second stage: run the application
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
 
-# Run the app
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
+COPY --from=build /app/target/*.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
