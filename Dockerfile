@@ -1,12 +1,11 @@
+# Use JDK-only image for runtime (smaller size)
 FROM eclipse-temurin:17-jdk
 
-# Install Maven
-RUN apt-get update && \
-    apt-get install -y maven && \
-    rm -rf /var/lib/apt/lists/*
-
+# Create working directory
 WORKDIR /app
 
-COPY . .
+# Copy built JAR from the build stage
+COPY --from=build /app/target/*.jar app.jar
 
-RUN mvn package -DskipTests
+# Command to run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
